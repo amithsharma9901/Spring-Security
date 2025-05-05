@@ -1,0 +1,562 @@
+import React, { useState } from 'react';
+
+function TodoApp() {
+  // Step 1: Set up state for todos and input
+  const [todos, setTodos] = useState([]);
+  const [newTodo, setNewTodo] = useState('');
+
+  // Step 2: Handle input change
+  const handleInputChange = (e) => {
+    setNewTodo(e.target.value);
+  };
+
+  // Step 3: Add new todo (Create)
+  const handleAddTodo = () => {
+    if (newTodo.trim() !== '') {
+      setTodos([...todos, newTodo]); // Append new item
+      setNewTodo(''); // Clear input
+    }
+  };
+
+  // ✅ Step 4: Delete a todo (Delete)
+  const handleDeleteTodo = (indexToDelete) => {
+    // Use filter to create a new array without the deleted item
+    const updatedTodos = todos.filter((todo, index) => index !== indexToDelete);
+
+    // Update state with the new array
+    setTodos(updatedTodos);
+  };
+
+  return (
+    <div>
+      <h2>Todo List</h2>
+      <input value={newTodo} onChange={handleInputChange} placeholder="Enter task" />
+      <button onClick={handleAddTodo}>Add</button>
+
+      <ul>
+        {todos.map((todo, index) => (
+          <li key={index}>
+            {todo}
+            {/* When Delete is clicked, call handleDeleteTodo with the index */}
+            <button onClick={() => handleDeleteTodo(index)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default TodoApp;
+
+
+
+import React, { useState } from 'react';
+
+function TodoApp() {
+  // Each todo is an object with id and text
+  const [todos, setTodos] = useState([
+    { id: 1, text: 'Buy groceries' },
+    { id: 2, text: 'Do homework' },
+    { id: 3, text: 'Exercise' }
+  ]);
+
+  const [newTodo, setNewTodo] = useState('');
+
+  // Add new todo
+  const handleAddTodo = () => {
+    if (newTodo.trim() !== '') {
+      const newItem = {
+        id: Date.now(), // unique ID using timestamp
+        text: newTodo
+      };
+      setTodos([...todos, newItem]);
+      setNewTodo('');
+    }
+  };
+
+  // ✅ Delete todo by ID
+  const handleDeleteTodo = (idToDelete) => {
+    const updatedTodos = todos.filter(todo => todo.id !== idToDelete);
+    setTodos(updatedTodos);
+  };
+
+  return (
+    <div>
+      <h2>Todo List</h2>
+      <input
+        value={newTodo}
+        onChange={(e) => setNewTodo(e.target.value)}
+        placeholder="Enter task"
+      />
+      <button onClick={handleAddTodo}>Add</button>
+
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            {todo.text}
+            {/* Delete by ID */}
+            <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default TodoApp;
+
+
+
+
+
+// PlayersData.js
+export const playersData = [
+  { id: 1, name: "Virat Kohli", role: "Batsman" },
+  { id: 2, name: "Jasprit Bumrah", role: "Bowler" },
+  { id: 3, name: "MS Dhoni", role: "Wicket Keeper" },
+];
+
+export const generateId = () => playersData.length + 1;
+
+export const getPlayers = () => playersData;
+
+export const getPlayer = (id) =>
+  playersData.find((p) => p.id === id);
+
+export const getIndexOfPlayer = (id) =>
+  playersData.findIndex((p) => p.id === id);
+
+export const addPlayer = (player) => {
+  playersData.push(player);
+};
+
+export const updatePlayer = (index, newPlayer) => {
+  playersData[index] = newPlayer;
+};
+
+export const deletePlayer = (index) => {
+  playersData.splice(index, 1);
+};
+
+
+
+// Team.js
+let team = {
+  title: "Mumbai Indians",
+  players: [],
+};
+
+export const getTeam = () => team;
+
+export const setTeam = (tm) => {
+  team = tm;
+};
+
+export const addTeamPlayer = (player) => {
+  if (team.players.find((p) => p.id === player.id)) {
+    alert("This Player already exists in your team 11");
+  } else {
+    team.players.push(player);
+  }
+};
+
+export const editTeamPlayer = (id, nwPlayer) => {
+  const index = team.players.findIndex((p) => p.id === id);
+  if (index === -1) {
+    alert("This Player does not exist in your team 11");
+  } else {
+    team.players[index] = nwPlayer;
+  }
+};
+
+export const deleteTeamPlayer = (id) => {
+  const index = team.players.findIndex((p) => p.id === id);
+  if (index === -1) {
+    alert("This Player does not exist in your team 11");
+  } else {
+    team.players.splice(index, 1);
+  }
+};
+
+export const getStatus = () => {
+  const batsmen = team.players.filter((p) => p.role === "Batsman");
+  const bowlers = team.players.filter((p) => p.role === "Bowler");
+  const wicketkeepers = team.players.filter((p) => p.role === "Wicket Keeper");
+
+  if (batsmen.length < 2) return "You need at least 2 batsmen";
+  if (bowlers.length < 2) return "You need at least 2 bowlers";
+  if (wicketkeepers.length < 1) return "You need at least 1 wicket keeper";
+  return "Team is Valid!";
+};
+
+
+import React, { useState } from 'react';
+
+function UserForm() {
+  // State variables for form fields and form submission status
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [age, setAge] = useState('');
+  const [submittedData, setSubmittedData] = useState(null);
+
+  // State for form validation
+  const [error, setError] = useState('');
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevent page reload on form submission
+
+    // Simple form validation
+    if (!name || !email || !age) {
+      setError('All fields are required!');
+      return;
+    }
+
+    if (isNaN(age) || age <= 0) {
+      setError('Please enter a valid age.');
+      return;
+    }
+
+    // Clear error if validation passes
+    setError('');
+
+    // Save the submitted data to display it below the form
+    setSubmittedData({ name, email, age });
+    
+    // Optionally, reset form fields after submission
+    setName('');
+    setEmail('');
+    setAge('');
+  };
+
+  return (
+    <div>
+      <h1>User Information Form</h1>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit}>
+        {/* Name input */}
+        <div>
+          <label>Name: </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+
+        {/* Email input */}
+        <div>
+          <label>Email: </label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+
+        {/* Age input */}
+        <div>
+          <label>Age: </label>
+          <input
+            type="number"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
+          />
+        </div>
+
+        {/* Submit button */}
+        <button type="submit">Submit</button>
+      </form>
+
+      {/* Error message */}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {/* Display submitted data if present */}
+      {submittedData && (
+        <div>
+          <h2>Submitted Data:</h2>
+          <p>Name: {submittedData.name}</p>
+          <p>Email: {submittedData.email}</p>
+          <p>Age: {submittedData.age}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default UserForm;
+
+
+
+
+import React, { useState } from "react";
+
+const RegisterForm = ({ onRegister }) => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!username || !email || !password) {
+      alert("Please enter all fields");
+      return;
+    }
+    onRegister({ username, email });
+    setUsername("");
+    setEmail("");
+    setPassword("");
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      /><br />
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      /><br />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      /><br />
+      <button type="submit">Register</button>
+    </form>
+  );
+};
+
+export default RegisterForm;
+
+
+//loign.jsx
+
+import React, { useState } from "react";
+
+const LoginForm = ({ onLogin }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      alert("Please enter all fields");
+      return;
+    }
+    onLogin({ email });
+    setEmail("");
+    setPassword("");
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      /><br />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      /><br />
+      <button type="submit">Login</button>
+    </form>
+  );
+};
+
+export default LoginForm;
+
+
+//app.jsx
+
+import React, { useState } from "react";
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
+
+const App = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [userData, setUserData] = useState(null);
+
+  const handleLogin = (data) => {
+    setUserData(data);
+    alert("Login successful!");
+  };
+
+  const handleRegister = (data) => {
+    setUserData(data);
+    alert("Registration successful!");
+    setIsLogin(true);
+  };
+
+  return (
+    <div style={{ textAlign: "center", padding: "2rem" }}>
+      <h1>{isLogin ? "Login" : "Register"} Form</h1>
+      {userData && <p>Welcome, {userData.username || "User"}!</p>}
+      {isLogin ? (
+        <LoginForm onLogin={handleLogin} />
+      ) : (
+        <RegisterForm onRegister={handleRegister} />
+      )}
+      <p>
+        {isLogin ? "Don't have an account?" : "Already have an account?"}
+        <button onClick={() => setIsLogin(!isLogin)}>
+          {isLogin ? " Register" : " Login"}
+        </button>
+      </p>
+    </div>
+  );
+};
+
+export default App;
+
+
+//html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bank Account Creation Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background-color: #f2f2f2;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 20px;
+    }
+
+    .checkbox {
+      margin-top: 10px;
+    }
+
+    .submit-btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .submit-btn:hover {
+      background-color: #218838;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Bank Account Creation Form</h2>
+    <form action="#" method="post">
+
+      <!-- Full Name -->
+      <label for="fullname">Full Name:</label>
+      <input type="text" id="fullname" name="fullname" required
+        pattern="^[A-Za-z ]+$" title="Only letters and spaces allowed">
+
+      <!-- Date of Birth -->
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" name="dob" required>
+
+      <!-- Gender -->
+      <label>Gender:</label>
+      <div class="radio-group">
+        <label><input type="radio" name="gender" value="Male" required> Male</label>
+        <label><input type="radio" name="gender" value="Female" required> Female</label>
+      </div>
+
+      <!-- Address -->
+      <label for="address">Address:</label>
+      <textarea id="address" name="address" rows="4" required></textarea>
+
+      <!-- Account Type -->
+      <label for="accountType">Account Type:</label>
+      <select id="accountType" name="accountType" required>
+        <option value="">--Select--</option>
+        <option value="Savings">Savings</option>
+        <option value="Current">Current</option>
+        <option value="Fixed Deposit">Fixed Deposit</option>
+      </select>
+
+      <!-- Initial Deposit -->
+      <label for="deposit">Initial Deposit (Minimum ₹1000):</label>
+      <input type="number" id="deposit" name="deposit" min="1000" required>
+
+      <!-- Phone Number -->
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" name="phone" required
+        pattern="^[6-9]\d{9}$" title="Enter a valid 10-digit Indian phone number starting with 6-9">
+
+      <!-- Email -->
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required
+        pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$" title="Enter a valid email address">
+
+      <!-- Terms -->
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="terms" name="terms" required>
+          I agree to the Terms and Conditions
+        </label>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="submit-btn">Create Account</button>
+    </form>
+  </div>
+
+</body>
+</html>
